@@ -9,6 +9,7 @@ export const PeoplePage: React.FC = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [filteredPeople, setFilteredPeople] = useState<Person[]>(people);
 
   useEffect(() => {
     setIsLoading(true);
@@ -24,8 +25,6 @@ export const PeoplePage: React.FC = () => {
         setIsLoading(false);
       });
   }, []);
-
-  const [filteredPeople, setFilteredPeople] = useState<Person[]>(people);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useParams } from 'react-router-dom';
 import { Person } from '../types';
 import { PersonLink } from './PersonLink';
 import { useMemo } from 'react';
@@ -9,6 +9,7 @@ interface Props {
 }
 
 export const PeopleTable = ({ people }: Props) => {
+  const { slug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentSort = searchParams.get('sort') || '';
   const currentOrder = searchParams.get('order') || '';
@@ -147,7 +148,11 @@ export const PeopleTable = ({ people }: Props) => {
 
       <tbody>
         {sortedPeople.map(person => (
-          <tr key={person.slug} data-cy="person">
+          <tr
+            key={person.slug}
+            data-cy="person"
+            className={person.slug === slug ? 'has-background-warning' : ''}
+          >
             <td>
               <PersonLink person={person} people={people} />
             </td>
