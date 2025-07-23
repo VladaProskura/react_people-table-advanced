@@ -2,6 +2,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Person } from '../types';
 import { PersonLink } from './PersonLink';
 import { useMemo } from 'react';
+import { getSearchWith } from '../utils/searchHelper';
 
 interface Props {
   people: Person[];
@@ -13,23 +14,25 @@ export const PeopleTable = ({ people }: Props) => {
   const currentOrder = searchParams.get('order') || '';
 
   const getSortParams = (field: string) => {
-    const newSearchParams = new URLSearchParams(searchParams);
+    const isSameField = currentSort === field;
+    let nextOrder;
 
-    if (currentSort !== field) {
-      newSearchParams.set('sort', field);
-      newSearchParams.set('order', 'asc');
+    if (!isSameField) {
+      nextOrder = 'asc';
     } else {
       if (currentOrder === 'asc') {
-        newSearchParams.set('order', 'desc');
-      } else if (currentOrder === 'desc') {
-        newSearchParams.delete('sort');
-        newSearchParams.delete('order');
+        nextOrder = 'desc';
       } else {
-        newSearchParams.set('order', 'asc');
+        nextOrder = null;
       }
     }
 
-    setSearchParams(newSearchParams);
+    const newSearch = getSearchWith(searchParams, {
+      sort: nextOrder ? field : null,
+      order: nextOrder,
+    });
+
+    setSearchParams(newSearch);
   };
 
   const getSortIcon = (field: string) => {

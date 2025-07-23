@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Person } from '../types';
+import { getSearchWith } from '../utils/searchHelper';
 
 type PeopleFiltersProps = {
   people: Person[];
@@ -43,32 +44,22 @@ export const PeopleFilters: React.FC<PeopleFiltersProps> = ({
   useEffect(() => {
     setFilteredPeople(filteredPeople);
 
-    const params = new URLSearchParams();
+    const newSearch = getSearchWith(searchParams, {
+      query: query || null,
+      sex: sexFilter !== 'all' ? sexFilter : null,
+      centuries: centuryFilter.length > 0 ? centuryFilter.map(String) : null,
+    });
 
-    if (query) {
-      params.set('query', query);
-    } else {
-      params.delete('query');
-    }
-
-    if (sexFilter !== 'all') {
-      params.set('sex', sexFilter);
-    }
-
-    centuryFilter.forEach(century =>
-      params.append('centuries', century.toString()),
-    );
-
-    setSearchParams(params);
+    setSearchParams(newSearch);
   }, [
     filteredPeople,
-    setFilteredPeople,
     query,
     sexFilter,
     centuryFilter,
+    searchParams,
+    setFilteredPeople,
     setSearchParams,
   ]);
-
   const toggleCenturyFilter = (century: number) => {
     setCenturyFilter(prev => {
       if (prev.includes(century)) {
@@ -148,7 +139,6 @@ export const PeopleFilters: React.FC<PeopleFiltersProps> = ({
             <a
               data-cy="centuryALL"
               className="button is-success is-outlined"
-              href="#/people"
               onClick={e => {
                 e.preventDefault();
                 setCenturyFilter([]);

@@ -1,6 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { isActive } from '../utils/isActive';
 
 export const Navbar = () => {
+  const location = useLocation();
+
   return (
     <nav
       data-cy="nav"
@@ -10,13 +13,15 @@ export const Navbar = () => {
     >
       <div className="container">
         <div className="navbar-brand">
-          <Link className="navbar-item" to="/">
+          <Link
+            className={`navbar-item ${isActive(location.pathname, '/') ? 'has-background-grey-lighter' : ''}`}
+            to="/"
+          >
             Home
           </Link>
 
           <Link
-            aria-current="page"
-            className="navbar-item has-background-grey-lighter"
+            className={`navbar-item ${isActive(location.pathname, '/people') ? 'has-background-grey-lighter' : ''}`}
             to="/people"
           >
             People
