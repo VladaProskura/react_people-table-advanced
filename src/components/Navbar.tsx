@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export const Navbar = () => {
   return (
     <nav
@@ -8,17 +10,17 @@ export const Navbar = () => {
     >
       <div className="container">
         <div className="navbar-brand">
-          <a className="navbar-item" href="#/">
+          <Link className="navbar-item" to="/">
             Home
-          </a>
+          </Link>
 
-          <a
+          <Link
             aria-current="page"
             className="navbar-item has-background-grey-lighter"
-            href="#/people"
+            to="/people"
           >
             People
-          </a>
+          </Link>
         </div>
       </div>
     </nav>
