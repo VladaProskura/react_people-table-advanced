@@ -22,7 +22,10 @@ export const Navbar = () => {
 
           <Link
             className={`navbar-item ${isActive(location.pathname, '/people') ? 'has-background-grey-lighter' : ''}`}
-            to="/people"
+            to={{
+              pathname: '/people',
+              search: location.search,
+            }}
           >
             People
           </Link>

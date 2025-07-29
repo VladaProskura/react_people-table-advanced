@@ -1,4 +1,5 @@
-import { useSearchParams, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Person } from '../types';
 import { PersonLink } from './PersonLink';
 import { useMemo } from 'react';
@@ -9,8 +10,8 @@ interface Props {
 }
 
 export const PeopleTable = ({ people }: Props) => {
-  const { slug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const currentSort = searchParams.get('sort') || '';
   const currentOrder = searchParams.get('order') || '';
 
@@ -56,6 +57,14 @@ export const PeopleTable = ({ people }: Props) => {
     );
   };
 
+  const isHighlighted = (personSlug: string) => {
+    return selectedSlug === personSlug;
+  };
+
+  const handleRowClick = (personSlug: string) => {
+    setSelectedSlug(prevSlug => (prevSlug === personSlug ? null : personSlug));
+  };
+
   const sortedPeople = useMemo(() => {
     if (!currentSort) {
       return people;
@@ -78,6 +87,18 @@ export const PeopleTable = ({ people }: Props) => {
     });
   }, [people, currentSort, currentOrder]);
 
+  useMemo(() => {
+    if (selectedSlug) {
+      const personStillExists = people.some(
+        person => person.slug === selectedSlug,
+      );
+
+      if (!personStillExists) {
+        setSelectedSlug(null);
+      }
+    }
+  }, [people, selectedSlug]);
+
   return (
     <table
       data-cy="peopleTable"
@@ -98,7 +119,6 @@ export const PeopleTable = ({ people }: Props) => {
               </a>
             </span>
           </th>
-
           <th>
             <span className="is-flex is-flex-wrap-nowrap">
               Sex
@@ -112,7 +132,6 @@ export const PeopleTable = ({ people }: Props) => {
               </a>
             </span>
           </th>
-
           <th>
             <span className="is-flex is-flex-wrap-nowrap">
               Born
@@ -126,7 +145,6 @@ export const PeopleTable = ({ people }: Props) => {
               </a>
             </span>
           </th>
-
           <th>
             <span className="is-flex is-flex-wrap-nowrap">
               Died
@@ -140,7 +158,6 @@ export const PeopleTable = ({ people }: Props) => {
               </a>
             </span>
           </th>
-
           <th>Mother</th>
           <th>Father</th>
         </tr>
@@ -151,10 +168,13 @@ export const PeopleTable = ({ people }: Props) => {
           <tr
             key={person.slug}
             data-cy="person"
-            className={person.slug === slug ? 'has-background-warning' : ''}
+            className={
+              isHighlighted(person.slug) ? 'has-background-warning' : ''
+            }
+            onClick={() => handleRowClick(person.slug)}
           >
             <td>
-              <PersonLink person={person} people={people} />
+              <PersonLink person={person} />
             </td>
             <td>{person.sex}</td>
             <td>{person.born}</td>
@@ -165,7 +185,6 @@ export const PeopleTable = ({ people }: Props) => {
                   person={
                     people.find(p => p.name === person.motherName) || null
                   }
-                  people={people}
                   name={person.motherName}
                 />
               ) : (
@@ -178,7 +197,6 @@ export const PeopleTable = ({ people }: Props) => {
                   person={
                     people.find(p => p.name === person.fatherName) || null
                   }
-                  people={people}
                   name={person.fatherName}
                 />
               ) : (

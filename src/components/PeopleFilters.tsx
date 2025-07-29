@@ -31,8 +31,15 @@ export const PeopleFilters: React.FC<PeopleFiltersProps> = ({
     return people.filter(person => {
       const personCentury = person.born ? Math.ceil(person.born / 100) : null;
 
+      const matchesQuery =
+        person.name.toLowerCase().includes(query.toLowerCase()) ||
+        (person.motherName &&
+          person.motherName.toLowerCase().includes(query.toLowerCase())) ||
+        (person.fatherName &&
+          person.fatherName.toLowerCase().includes(query.toLowerCase()));
+
       return (
-        person.name.toLowerCase().includes(query.toLowerCase()) &&
+        matchesQuery &&
         (sexFilter === 'all' || person.sex === sexFilter) &&
         (centuryFilter.length === 0 ||
           (personCentury && centuryFilter.includes(personCentury)))

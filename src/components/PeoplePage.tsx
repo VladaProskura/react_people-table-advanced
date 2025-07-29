@@ -33,10 +33,12 @@ export const PeoplePage: React.FC = () => {
       <div className="block">
         <div className="columns is-desktop is-flex-direction-row-reverse">
           <div className="column is-7-tablet is-narrow-desktop">
-            <PeopleFilters
-              people={people}
-              setFilteredPeople={setFilteredPeople}
-            />
+            {!isLoading && people.length > 0 && (
+              <PeopleFilters
+                people={people}
+                setFilteredPeople={setFilteredPeople}
+              />
+            )}
           </div>
 
           <div className="column">
